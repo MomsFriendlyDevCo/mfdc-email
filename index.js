@@ -12,8 +12,23 @@ var nodemailerSendmail = require('nodemailer-sendmail-transport');
 var hasInit = false; // Have called init()
 var transporter;
 
+var defaults = {};
+
+/**
+* Initalize the emailer
+* If this is called multiple times it restarts the mail transport
+* @return {Object} This chainable object
+*/
 function init() {
-	if (!config.email.enabled) return;
+	defaults = {
+		from: config.email.from,
+		to: config.email.to,
+		subject: config.email.subject || '',
+		cc: config.email.cc || [],
+		bcc: config.email.bcc || [],
+	};
+
+	if (!config.email.enabled) return this;
 	// Work out mail transport {{{
 	switch (config.email.method) {
 		case 'mailgun':
@@ -33,6 +48,8 @@ function init() {
 	// }}}
 
 	hasInit = true;
+
+	return this;
 }
 
 
@@ -54,13 +71,7 @@ function init() {
 */
 function send(mail, callback) {
 	if (!hasInit) init();
-	_.defaults(mail, {
-		from: config.email.from,
-		to: config.email.to,
-		subject: '',
-		cc: [],
-		bcc: [],
-	});
+	_.defaults(mail, defaults);
 
 	['cc', 'bcc'].forEach(function(f) { // Delete blank fields
 		if (_.isEmpty(mail[f])) delete mail[f];

@@ -3,7 +3,7 @@ global.config = {
 	name: 'mfdc-email',
 	title: 'MFDC-Email module',
 	email: {
-		enabled: false,
+		enabled: true,
 		method: 'mailgun',
 		to: 'matt@mfdc.biz',
 		from: 'noreply@mfdc.biz',

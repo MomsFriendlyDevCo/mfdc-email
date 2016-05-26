@@ -3,10 +3,10 @@ var expect = require('chai').expect;
 
 require('./config');
 
-describe('Mailgun > Send', function() {
+describe('Disabled email', function() {
 	before(function() {
-		config.email.enabled = true;
-		config.email.method = 'mailgun';
+		config.email.enabled = false;
+		config.email.method = 'sendmail';
 	});
 
 	it('Should send a plain email', function(done) {
@@ -17,10 +17,7 @@ describe('Mailgun > Send', function() {
 				text: 'Hello World',
 			}, function(err, res) {
 				expect(err).to.be.not.ok;
-				expect(res).to.be.an.object;
-				expect(res).to.have.property('id');
-				expect(res).to.have.property('message');
-				expect(res.message).to.match(/^Queued/);
+				expect(res).to.be.undefined;
 				done();
 			});
 	});
@@ -33,10 +30,7 @@ describe('Mailgun > Send', function() {
 				html: '<p>Hello <b>World</b></p>',
 			}, function(err, res) {
 				expect(err).to.be.not.ok;
-				expect(res).to.be.an.object;
-				expect(res).to.have.property('id');
-				expect(res).to.have.property('message');
-				expect(res.message).to.match(/^Queued/);
+				expect(res).to.be.undefined;
 				done();
 			});
 	});
