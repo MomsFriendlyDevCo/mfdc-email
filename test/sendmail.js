@@ -9,7 +9,7 @@ describe('Sendmail > Send', function() {
 		config.email.method = 'sendmail';
 	});
 
-	it('Should send a plain email', function(done) {
+	it('should send a plain email', function(done) {
 		email
 			.init()
 			.send({
@@ -22,7 +22,7 @@ describe('Sendmail > Send', function() {
 			});
 	});
 
-	it('Should send a HTML email', function(done) {
+	it('should send a HTML email', function(done) {
 		email
 			.init()
 			.send({

@@ -9,7 +9,7 @@ describe('Mailgun > Send', function() {
 		config.email.method = 'mailgun';
 	});
 
-	it('Should send a plain email', function(done) {
+	it('should send a plain email', function(done) {
 		email
 			.init()
 			.send({
@@ -25,7 +25,7 @@ describe('Mailgun > Send', function() {
 			});
 	});
 
-	it('Should send a HTML email', function(done) {
+	it('should send a HTML email', function(done) {
 		email
 			.init()
 			.send({

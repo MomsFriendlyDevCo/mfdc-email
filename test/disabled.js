@@ -9,7 +9,7 @@ describe('Disabled email > Send', function() {
 		config.email.method = 'sendmail';
 	});
 
-	it('Should send a plain email', function(done) {
+	it('should send a plain email', function(done) {
 		email
 			.init()
 			.send({
@@ -22,7 +22,7 @@ describe('Disabled email > Send', function() {
 			});
 	});
 
-	it('Should send a HTML email', function(done) {
+	it('should send a HTML email', function(done) {
 		email
 			.init()
 			.send({
@@ -36,13 +36,13 @@ describe('Disabled email > Send', function() {
 	});
 });
 
-describe.only('Disabled email > chainable', function() {
+describe('Disabled email > chainable', function() {
 	before(function() {
 		config.email.enabled = false;
 		config.email.method = 'sendmail';
 	});
 
-	it('Should send a plain email', function(done) {
+	it('should send a plain email', function(done) {
 		email
 			.init()
 			.subject('Plain chainable method email test via mfdc-email')
@@ -54,7 +54,7 @@ describe.only('Disabled email > chainable', function() {
 			});
 	});
 
-	it('Should send a HTML email', function(done) {
+	it('should send a HTML email', function(done) {
 		email
 			.init()
 			.subject('HTML chainable method email test via mfdc-email')
@@ -62,6 +62,32 @@ describe.only('Disabled email > chainable', function() {
 			.send(function(err, res) {
 				expect(err).to.be.not.ok;
 				expect(res).to.be.undefined;
+				done();
+			});
+	});
+});
+
+describe.only('Template views', function() {
+	before(function() {
+		config.email.enabled = false;
+		config.email.method = 'sendmail';
+	});
+
+	it('should correctly template the email', function(done) {
+		email
+			.to('Joe Random <joe@random.com>')
+			.subject('Password Recovery')
+			.template(__dirname + '/views/password-recovery.txt')
+			.templateParams({
+				name: 'Joe Random',
+				signoff: 'The MFDC Team',
+				url: 'http://domain.com/reset/TOKEN',
+			})
+			.send(function(err, body) {
+				expect(err).to.be.not.ok;
+				expect(body).to.be.a.string;
+				expect(body).to.match(/Joe Random/);
+				expect(body).to.match(/The MFDC Team\n$/);
 				done();
 			});
 	});

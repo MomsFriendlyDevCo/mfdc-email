@@ -5,11 +5,15 @@
 
 var _ = require('lodash');
 var colors = require('colors');
+var fs = require('fs');
+var fspath = require('path');
+var mustache = require('mustache');
 var nodemailer = require('nodemailer');
 var nodemailerMailgun = require('nodemailer-mailgun-transport');
 var nodemailerSendmail = require('nodemailer-sendmail-transport');
 
 var hasInit = false; // Have called init()
+var hasReset = false; // Have called reset()
 var transporter;
 
 var defaults = {};
@@ -20,13 +24,7 @@ var defaults = {};
 * @return {Object} This chainable object
 */
 function init() {
-	defaults = {
-		from: config.email.from,
-		to: config.email.to,
-		subject: config.email.subject || '',
-		cc: config.email.cc || [],
-		bcc: config.email.bcc || [],
-	};
+	if (!hasReset) reset();
 
 	// Work out mail transport {{{
 	if (config.email.enabled) {
@@ -55,6 +53,25 @@ function init() {
 
 
 /**
+* Reset all defaults
+* @return {Object} This chainable object
+*/
+function reset() {
+	defaults = {
+		from: config.email.from,
+		to: config.email.to,
+		subject: config.email.subject || '',
+		cc: config.email.cc || [],
+		bcc: config.email.bcc || [],
+	};
+
+	hasReset = true;
+
+	return this;
+}
+
+
+/**
 * Send an email
 * All addresses can be plain email addresses ('foo@bar.com') or aliased ('Mr Foo Bar <foo@bar.com>')
 * Either mail.html or mail.text must be specified
@@ -62,6 +79,8 @@ function init() {
 * @param {Object,function} mail The mail object to dispatch or the callback if you wish to use all the defaults
 * @param {string} [mail.html] HTML payload of the email
 * @param {srting} [mail.text] Plain text payload of the email
+* @param {string} [mail.template] File on disk to use to load the email template. This is parsed as a mustache template (extension determines the format, .txt=plain text, .html=rich content)
+* @param {Object} [mail.templateParams] Object containing any dynamic parameters to be passed to the mustache template specified in mail.template
 * @param {string} [mail.from] The from portion of the email (defaults to config.email.from if unspecified)
 * @param {string} [mail.to] The to portion of the email (defaults to config.email.to if unspecified)
 * @param {string} [mail.subject] The from portion of the email (defaults to config.email.subject if unspecified)
@@ -84,16 +103,29 @@ function send(mail, callback) {
 	}
 	// }}}
 
-
 	['cc', 'bcc'].forEach(function(f) { // Delete blank fields
 		if (_.isEmpty(mail[f])) delete mail[f];
 	});
 
-	if (_.isEmpty(mail.text) && _.isEmpty(mail.html)) throw new Error('Neither mail.html or mail.text is specified when trying to send an email');
+	if (mail.template) {
+		var content = fs.readFileSync(mail.template, 'utf-8');
+		content = mustache.render(content, mail.templateParams);
+
+		var ext = fspath.parse(mail.template).ext;
+		if (ext == '.txt') {
+			mail.text = content;
+		} else if (ext == '.html') {
+			mail.html = content;
+		} else {
+			throw new Error('Unknown template file format: ' + mail.template + '. Use either .txt or .html files');
+		}
+	} else if (_.isEmpty(mail.text) && _.isEmpty(mail.html)) {
+		throw new Error('Neither mail.html, mail.text or mail.template is specified when trying to send an email');
+	}
 
 	if (!config.email.enabled) {
 		console.log(colors.blue('[Email]'), 'Mail sending disabled. Would deliver email', colors.cyan('"' + mail.subject + '"'), 'to', colors.cyan(mail.to));
-		return _.attempt(callback);
+		if (_.isFunction(callback)) callback(null, mail.text || mail.html);
 	} else {
 		console.log(colors.blue('[Email]'), 'Sending', colors.cyan('"' + mail.subject + '"'), 'to', colors.cyan(mail.to));
 		transporter.sendMail(mail, callback || _.noop);
@@ -111,6 +143,8 @@ function send(mail, callback) {
 * @return {Object} This chainable object
 */
 function set(property, value) {
+	if (!hasReset) reset();
+
 	if (_.isObject(property)) {
 		_.merge(defaults, property);
 	} else {
@@ -123,6 +157,7 @@ module.exports = {
 	init: init,
 	send: send,
 	set: set,
+	reset: reset,
 
 	to: _.partial(set, 'to'),
 	from: _.partial(set, 'from'),
@@ -131,4 +166,6 @@ module.exports = {
 	subject: _.partial(set, 'subject'),
 	text: _.partial(set, 'text'),
 	html: _.partial(set, 'html'),
+	template: _.partial(set, 'template'),
+	templateParams: _.partial(set, 'templateParams'),
 };
