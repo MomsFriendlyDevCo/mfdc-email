@@ -7,7 +7,34 @@ Quickstart guide
 ----------------
 If you're project is already setup with appropriate config (see [Expected Config](#expected-config)) you should just be able to call the module as follows:
 
-FIXME
+
+```javascript
+var email = require('mfdc-email');
+
+email
+	.send({
+		to: 'someone@somewhere.com',
+		from: 'noreply@domain.com',
+		subject: 'Plain email test via mfdc-email',
+		text: 'Hello World',
+	}, function(err, res) {
+		// Do something with the result
+	});
+```
+
+or using chainable methods:
+
+```javascript
+var email = require('mfdc-email');
+
+email
+	.to('Joe Random <joe@random.com>')
+	.subject('HTML chainable method email test via mfdc-email')
+	.html('<p>Hello <b>World</b></p>')
+	.send(function(err, res) {
+		// Do something with the result
+	});
+```
 
 
 API
@@ -16,6 +43,19 @@ API
 send(email, callback)
 ---------------------
 Dispatch an email. This is as functionally similar to the Nodemailer `send()` command as possible. Use this if lower level access is required.
+
+to, from, cc, bcc, subject, text, html()
+----------------------------------------
+All these methods are chainable:
+
+```javascript
+var email = require('mfdc-email');
+
+email
+	.to('someone@somewhere.com')
+	.subject('something')
+	.send();
+```
 
 
 Expected Config
