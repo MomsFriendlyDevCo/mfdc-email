@@ -42,6 +42,7 @@ Specifying the `template` property either as a key in the `send()` object or via
 
 * The type of email to send is determined by the file extension. `.txt` files are plain text and `.html` files are rich content.
 * All templates are rendered via [Mustache](http://mustache.github.io) with the parameters used taken from the `templateParams` option.
+* Mustache will automatically escape all variables. If you wish to use an unsecaped variable like a URL encase it in three levels of brackets rather than two e.g. `{{{url}}}`
 
 ```javascript
 var email = require('mfdc-email');
