@@ -30,6 +30,11 @@ function init() {
 	if (config.email.enabled) {
 		switch (config.email.method) {
 			case 'mailgun':
+				if (
+					/^https?:\/\//.test(config.mailgun.domain) ||
+					/mailgun/.test(config.mailgun.domain)
+				) throw new Error("Mailgun domain should not contain 'http(s)://' prefix or mailgun. Should resemble the domain name e.g. 'acme.com'");
+
 				transporter = nodemailer.createTransport(nodemailerMailgun({
 					auth: {
 						api_key: config.mailgun.apiKey,

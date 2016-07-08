@@ -40,4 +40,15 @@ describe('Mailgun > Send', function() {
 				done();
 			});
 	});
+
+	it.only('should complain if a domain is passed that begins with http(s)://', function() {
+		global.config.mailgun.domain = 'http://api.mailgun.net/v3/acme.com';
+		expect(email.init).to.throw(/should not contain/);
+
+		global.config.mailgun.domain = 'https://api.mailgun.net/v3/acme.com';
+		expect(email.init).to.throw(/should not contain/);
+
+		global.config.mailgun.domain = 'api.mailgun.net/v3/acme.com';
+		expect(email.init).to.throw(/should not contain/);
+	});
 });
