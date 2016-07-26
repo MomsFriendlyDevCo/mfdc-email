@@ -92,7 +92,7 @@ Initialize the mail transport. This is called automatically by `send()` if it ha
 
 Expected Config
 ---------------
-This module expects the following `global.config` variables to be specified to operate:
+This module expects the following `global.config` / `global.app.config` variables to be specified to operate:
 
 | Method    | Key                              | Type           | Description |
 |-----------|----------------------------------|----------------|-------------|

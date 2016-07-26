@@ -16,6 +16,9 @@ var hasInit = false; // Have called init()
 var hasReset = false; // Have called reset()
 var transporter;
 
+var config; // Main config structure to use
+var configLocations = ['config', 'app.config']; // Array of places to look for config Is expected to contain at least a 'email' object and possibly 'mailgun'
+
 var defaults = {};
 
 /**
@@ -24,6 +27,16 @@ var defaults = {};
 * @return {Object} This chainable object
 */
 function init() {
+	// Locate config {{{
+	configLocations.forEach(function(key) {
+		if (_.has(global, key)) {
+			module.exports._config = config = _.get(global, key);
+			return false;
+		}
+	});
+	if (_.isUndefined(config)) throw new Error('Cannot find email config in', configLocations);
+	// }}}
+
 	if (!hasReset) reset();
 
 	// Work out mail transport {{{
@@ -181,4 +194,6 @@ var self = module.exports = {
 	html: _.partial(set, 'html'),
 	template: _.partial(set, 'template'),
 	templateParams: _.partial(set, 'templateParams'),
+
+	_config: config,
 };

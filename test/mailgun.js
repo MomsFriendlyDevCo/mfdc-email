@@ -1,7 +1,7 @@
 var email = require('..');
 var expect = require('chai').expect;
 
-require('./config');
+global.config = require('./config');
 
 describe('Mailgun > Send', function() {
 	before(function() {

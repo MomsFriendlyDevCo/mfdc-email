@@ -1,5 +1,7 @@
-// Make a fake config for testing purposes
-global.config = {
+// Return a fake config for testing purposes
+var _ = require('lodash');
+
+module.exports = _.merge({
 	name: 'mfdc-email',
 	title: 'MFDC-Email module',
 	email: {
@@ -13,6 +15,4 @@ global.config = {
 		apiKey: 'FIXME:STORE THIS IN THE PRIVATE.JS FILE!!!',
 		domain: 'FIXME:STORE THIS IN THE PRIVATE.JS FILE!!!',
 	},
-};
-
-require('./private.js');
+}, require('./private.js'));
