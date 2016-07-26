@@ -46,7 +46,7 @@ function init() {
 				transporter = nodemailer.createTransport(nodemailerSendmail());
 				break;
 			default:
-				next('Unknown mail transport method: ' + config.library.request.method);
+				next('Unknown mail transport method: ' + config.email.method);
 		}
 	}
 	// }}}
