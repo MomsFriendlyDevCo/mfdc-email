@@ -155,10 +155,18 @@ function set(property, value) {
 	} else {
 		defaults[property] = value;
 	}
-	return this;
+
+	// Cant have mutually exclusive html / text combo
+	if (property == 'html') {
+		delete defaults.text;
+	} else if (property == 'text') {
+		delete defaults.html;
+	}
+
+	return self;
 }
 
-module.exports = {
+var self = module.exports = {
 	init: init,
 	send: send,
 	set: set,
