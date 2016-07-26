@@ -10,6 +10,7 @@ describe('Mailgun > Send', function() {
 	});
 
 	it('should send a plain email', function(done) {
+		this.timeout(10 * 1000);
 		email
 			.init()
 			.send({
@@ -26,6 +27,7 @@ describe('Mailgun > Send', function() {
 	});
 
 	it('should send a HTML email', function(done) {
+		this.timeout(10 * 1000);
 		email
 			.init()
 			.send({
