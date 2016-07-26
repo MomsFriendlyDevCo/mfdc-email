@@ -17,7 +17,7 @@ describe('Disabled email > Send', function() {
 				text: 'Hello World',
 			}, function(err, res) {
 				expect(err).to.be.not.ok;
-				expect(res).to.be.undefined;
+				expect(res).to.be.equal('Hello World');
 				done();
 			});
 	});
@@ -30,7 +30,7 @@ describe('Disabled email > Send', function() {
 				html: '<p>Hello <b>World</b></p>',
 			}, function(err, res) {
 				expect(err).to.be.not.ok;
-				expect(res).to.be.undefined;
+				expect(res).to.be.equal('<p>Hello <b>World</b></p>');
 				done();
 			});
 	});
@@ -49,7 +49,7 @@ describe('Disabled email > chainable', function() {
 			.text('Hello World')
 			.send(function(err, res) {
 				expect(err).to.be.not.ok;
-				expect(res).to.be.undefined;
+				expect(res).to.be.equal('Hello World');
 				done();
 			});
 	});
@@ -61,13 +61,13 @@ describe('Disabled email > chainable', function() {
 			.html('<p>Hello <b>World</b></p>')
 			.send(function(err, res) {
 				expect(err).to.be.not.ok;
-				expect(res).to.be.undefined;
+				expect(res).to.be.equal('<p>Hello <b>World</b></p>');
 				done();
 			});
 	});
 });
 
-describe.only('Template views', function() {
+describe('Template views', function() {
 	before(function() {
 		config.email.enabled = false;
 		config.email.method = 'sendmail';
@@ -75,6 +75,7 @@ describe.only('Template views', function() {
 
 	it('should correctly template the email', function(done) {
 		email
+			.init()
 			.to('Joe Random <joe@random.com>')
 			.subject('Password Recovery')
 			.template(__dirname + '/views/password-recovery.txt')
