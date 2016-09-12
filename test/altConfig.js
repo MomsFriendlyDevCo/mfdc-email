@@ -13,8 +13,7 @@ describe('Alternative config locations', function() {
 	});
 
 	it('should load alternate config locations', function() {
-		email
-			.init()
+		var myEmail = email()
 			.send({
 				subject: 'Alternate config email test',
 				text: 'Hello World',
@@ -22,10 +21,10 @@ describe('Alternative config locations', function() {
 				expect(err).to.be.not.ok;
 				expect(res).to.be.an.object;
 
-				expect(email).to.be.an.object;
-				expect(email).to.have.property('_config');
-				expect(email._config).to.be.an.object;
-				expect(email._config.altConfig).to.be.true;
+				expect(myEmail).to.be.an.object;
+				expect(myEmail).to.have.property('config');
+				expect(myEmail.config).to.be.an.object;
+				expect(myEmail.config.altConfig).to.be.true;
 			});
 	});
 });

@@ -11,8 +11,8 @@ describe('Mailgun > Send', function() {
 
 	it('should send a plain email', function(done) {
 		this.timeout(10 * 1000);
-		email
-			.init()
+
+		email()
 			.send({
 				subject: 'Plain email test via mfdc-email',
 				text: 'Hello World',
@@ -28,8 +28,8 @@ describe('Mailgun > Send', function() {
 
 	it('should send a HTML email', function(done) {
 		this.timeout(10 * 1000);
-		email
-			.init()
+
+		email()
 			.send({
 				subject: 'HTML email test via mfdc-email',
 				html: '<p>Hello <b>World</b></p>',
@@ -45,12 +45,12 @@ describe('Mailgun > Send', function() {
 
 	it('should complain if a domain is passed that begins with http(s)://', function() {
 		global.config.mailgun.domain = 'http://api.mailgun.net/v3/acme.com';
-		expect(email.init).to.throw(/should not contain/);
+		expect(email).to.throw(/should not contain/);
 
 		global.config.mailgun.domain = 'https://api.mailgun.net/v3/acme.com';
-		expect(email.init).to.throw(/should not contain/);
+		expect(email).to.throw(/should not contain/);
 
 		global.config.mailgun.domain = 'api.mailgun.net/v3/acme.com';
-		expect(email.init).to.throw(/should not contain/);
+		expect(email).to.throw(/should not contain/);
 	});
 });

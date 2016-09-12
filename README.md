@@ -11,7 +11,9 @@ If you're project is already setup with appropriate config (see [Expected Config
 ```javascript
 var email = require('mfdc-email');
 
-email
+// NOTE: You have to create a new instance
+
+email()
 	.send({
 		to: 'someone@somewhere.com',
 		from: 'noreply@domain.com',
@@ -27,7 +29,7 @@ or using chainable methods:
 ```javascript
 var email = require('mfdc-email');
 
-email
+email()
 	.to('Joe Random <joe@random.com>')
 	.subject('HTML chainable method email test via mfdc-email')
 	.html('<p>Hello <b>World</b></p>')
@@ -47,7 +49,7 @@ Specifying the `template` property either as a key in the `send()` object or via
 ```javascript
 var email = require('mfdc-email');
 
-email
+email()
 	.to('Joe Random <joe@random.com>')
 	.subject('Password Recovery')
 	.template(config.root + '/views/emails/password-recovery.txt')
@@ -73,21 +75,16 @@ All these methods are chainable:
 ```javascript
 var email = require('mfdc-email');
 
-email
+email()
 	.to('someone@somewhere.com')
 	.subject('something')
 	.send();
 ```
 
 
-reset()
--------
-Reset all defaults.
-
-
 init()
 ------
-Initialize the mail transport. This is called automatically by `send()` if it has not already been invoked.
+Reinitialize the mail transport and reset all defaults to the global values.
 
 
 Expected Config

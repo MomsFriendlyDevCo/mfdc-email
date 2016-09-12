@@ -10,8 +10,7 @@ describe('Sendmail > Send', function() {
 	});
 
 	it('should send a plain email', function(done) {
-		email
-			.init()
+		email()
 			.send({
 				subject: 'Plain email test via mfdc-email',
 				text: 'Hello World',
@@ -23,8 +22,7 @@ describe('Sendmail > Send', function() {
 	});
 
 	it('should send a HTML email', function(done) {
-		email
-			.init()
+		email()
 			.send({
 				subject: 'HTML email test via mfdc-email',
 				html: '<p>Hello <b>World</b></p>',

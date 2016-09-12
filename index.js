@@ -12,14 +12,10 @@ var nodemailer = require('nodemailer');
 var nodemailerMailgun = require('nodemailer-mailgun-transport');
 var nodemailerSendmail = require('nodemailer-sendmail-transport');
 
-var hasInit = false; // Have called init()
-var hasReset = false; // Have called reset()
 var transporter;
 
-var config; // Main config structure to use
-var configLocations = ['config', 'app.config']; // Array of places to look for config Is expected to contain at least a 'email' object and possibly 'mailgun'
-
-var defaults = {};
+var appConfig; // Global config to use when resetting (locations determined by appConfig)
+var appConfigLocations = ['config', 'app.config']; // Array of places to look for config Is expected to contain at least a 'email' object and possibly 'mailgun'
 
 /**
 * Initalize the emailer
@@ -27,31 +23,39 @@ var defaults = {};
 * @return {Object} This chainable object
 */
 function init() {
-	// Locate config {{{
-	configLocations.forEach(function(key) {
-		if (_.has(global, key)) {
-			module.exports._config = config = _.get(global, key);
-			return false;
-		}
-	});
-	if (_.isUndefined(config)) throw new Error('Cannot find email config in', configLocations);
+	// Locate config if we dont have one {{{
+	if (_.isUndefined(appConfig)) {
+		appConfigLocations.forEach(function(key) {
+			if (_.has(global, key)) {
+				appConfig = _.get(global, key);
+				return false;
+			}
+		});
+		if (_.isUndefined(appConfig)) throw new Error('Cannot find email config in', appConfigLocations);
+	}
 	// }}}
 
-	if (!hasReset) reset();
+	this.config = { // Reset basics
+		from: appConfig.email.from,
+		to: appConfig.email.to,
+		subject: appConfig.email.subject || '',
+		cc: appConfig.email.cc || [],
+		bcc: appConfig.email.bcc || [],
+	};
 
 	// Work out mail transport {{{
-	if (config.email.enabled) {
-		switch (config.email.method) {
+	if (appConfig.email.enabled) {
+		switch (appConfig.email.method) {
 			case 'mailgun':
 				if (
-					/^https?:\/\//.test(config.mailgun.domain) ||
-					/mailgun/.test(config.mailgun.domain)
+					/^https?:\/\//.test(appConfig.mailgun.domain) ||
+					/mailgun/.test(appConfig.mailgun.domain)
 				) throw new Error("Mailgun domain should not contain 'http(s)://' prefix or mailgun. Should resemble the domain name e.g. 'acme.com'");
 
 				transporter = nodemailer.createTransport(nodemailerMailgun({
 					auth: {
-						api_key: config.mailgun.apiKey,
-						domain: config.mailgun.domain,
+						api_key: appConfig.mailgun.apiKey,
+						domain: appConfig.mailgun.domain,
 					},
 				}));
 				break
@@ -59,31 +63,10 @@ function init() {
 				transporter = nodemailer.createTransport(nodemailerSendmail());
 				break;
 			default:
-				next('Unknown mail transport method: ' + config.email.method);
+				next('Unknown mail transport method: ' + appConfig.email.method);
 		}
 	}
 	// }}}
-
-	hasInit = true;
-
-	return this;
-}
-
-
-/**
-* Reset all defaults
-* @return {Object} This chainable object
-*/
-function reset() {
-	defaults = {
-		from: config.email.from,
-		to: config.email.to,
-		subject: config.email.subject || '',
-		cc: config.email.cc || [],
-		bcc: config.email.bcc || [],
-	};
-
-	hasReset = true;
 
 	return this;
 }
@@ -108,45 +91,45 @@ function reset() {
 * @return {Object} This chainable object
 */
 function send(mail, callback) {
-	if (!hasInit) init();
-
 	// Argument mangling {{{
 	if (_.isFunction(mail)) {
 		callback = mail;
-		mail = defaults;
+		mail = {};
 	} else if (_.isObject(mail)) {
-		_.defaults(mail, defaults);
+		_.merge(this.config, mail);
 	} else if (_.isEmpty(mail)) {
 		callback = _.noop;
 	}
 	// }}}
 
-	['cc', 'bcc'].forEach(function(f) { // Delete blank fields
-		if (_.isEmpty(mail[f])) delete mail[f];
+	['cc', 'bcc'].forEach(f => { // Delete blank fields
+		if (this.config[f] && _.isEmpty(this.config[f])) delete this.config[f];
 	});
 
-	if (mail.template) {
-		var content = fs.readFileSync(mail.template, 'utf-8');
-		content = mustache.render(content, mail.templateParams);
+	if (this.config.template) {
+		var content = fs.readFileSync(this.config.template, 'utf-8');
+		content = mustache.render(content, this.config.templateParams);
 
-		var ext = fspath.parse(mail.template).ext;
+		var ext = fspath.parse(this.config.template).ext;
 		if (ext == '.txt') {
-			mail.text = content;
+			this.config.text = content;
 		} else if (ext == '.html') {
-			mail.html = content;
+			this.config.html = content;
 		} else {
-			throw new Error('Unknown template file format: ' + mail.template + '. Use either .txt or .html files');
+			throw new Error('Unknown template file format: ' + this.config.template + '. Use either .txt or .html files');
 		}
-	} else if (_.isEmpty(mail.text) && _.isEmpty(mail.html)) {
+	} else if (_.isEmpty(this.config.text) && _.isEmpty(this.config.html)) {
 		throw new Error('Neither mail.html, mail.text or mail.template is specified when trying to send an email');
 	}
 
-	if (!config.email.enabled) {
-		console.log(colors.blue('[Email]'), 'Mail sending disabled. Would deliver email', colors.cyan('"' + mail.subject + '"'), 'to', colors.cyan(mail.to));
-		if (_.isFunction(callback)) callback(null, mail.text || mail.html);
+	if (!_.get(appConfig, 'email.enabled')) {
+		console.log(colors.blue('[Email]'), 'Mail sending disabled. Would deliver email', colors.cyan('"' + this.config.subject + '"'), 'to', colors.cyan(this.config.to));
+		if (_.isFunction(callback)) setTimeout(() => callback(null, this.config.text || this.config.html));
 	} else {
-		console.log(colors.blue('[Email]'), 'Sending', colors.cyan('"' + mail.subject + '"'), 'to', colors.cyan(mail.to));
-		transporter.sendMail(mail, callback || _.noop);
+		console.log(colors.blue('[Email]'), 'Sending', colors.cyan('"' + this.config.subject + '"'), 'to', colors.cyan(this.config.to));
+		setTimeout(() => {
+			transporter.sendMail(this.config, callback || _.noop);
+		});
 	}
 
 	return this;
@@ -161,39 +144,45 @@ function send(mail, callback) {
 * @return {Object} This chainable object
 */
 function set(property, value) {
-	if (!hasReset) reset();
-
 	if (_.isObject(property)) {
-		_.merge(defaults, property);
+		_.merge(this.config, property);
 	} else {
-		defaults[property] = value;
+		this.config[property] = value;
 	}
 
 	// Cant have mutually exclusive html / text combo
 	if (property == 'html') {
-		delete defaults.text;
+		delete this.config.text;
 	} else if (property == 'text') {
-		delete defaults.html;
+		delete this.config.html;
 	}
 
-	return self;
+	return this;
 }
 
-var self = module.exports = {
-	init: init,
-	send: send,
-	set: set,
-	reset: reset,
+function MFDCEmail(settings) {
+	this.config = settings || {}; // Gets populated from globals via init
 
-	to: _.partial(set, 'to'),
-	from: _.partial(set, 'from'),
-	cc: _.partial(set, 'cc'),
-	bcc: _.partial(set, 'bcc'),
-	subject: _.partial(set, 'subject'),
-	text: _.partial(set, 'text'),
-	html: _.partial(set, 'html'),
-	template: _.partial(set, 'template'),
-	templateParams: _.partial(set, 'templateParams'),
+	this.init = init;
+	this.send = send;
+	this.set = set;
 
-	_config: config,
+	this.to = _.partial(set, 'to');
+	this.from = _.partial(set, 'from');
+	this.cc = _.partial(set, 'cc');
+	this.bcc = _.partial(set, 'bcc');
+	this.subject = _.partial(set, 'subject');
+	this.text = _.partial(set, 'text');
+	this.html = _.partial(set, 'html');
+	this.template = _.partial(set, 'template');
+	this.templateParams = _.partial(set, 'templateParams');
+
+	this.init();
+
+	return this;
 };
+
+
+module.exports = function() {
+	return new MFDCEmail();
+}
