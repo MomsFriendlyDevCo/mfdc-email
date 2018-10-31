@@ -13,9 +13,10 @@ describe('Mailgun > Send', function() {
 		this.timeout(10 * 1000);
 
 		email()
+			.params({user: {name: 'Joe'}})
 			.send({
 				subject: 'Plain email test via mfdc-email',
-				text: 'Hello World',
+				text: 'Hello {{user.name}}',
 			}, function(err, res) {
 				expect(err).to.be.not.ok;
 				expect(res).to.be.an('object');

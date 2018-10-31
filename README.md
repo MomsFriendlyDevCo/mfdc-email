@@ -81,6 +81,28 @@ email()
 ```
 
 
+params, templateparams
+----------------------
+Populate the Handlebars replacement engine with a given object.
+
+
+template
+--------
+Specify a template file to read to obtain the email body. The file extension should be `.txt` or `.html` to determine the body type.
+Specify `.params` (or `.templateParams`) to populate the Handlebars replacement engine.
+
+```javascript
+var email = require('@momsfriendlydevco/email');
+
+email()
+	.to('someone@somewhere.com')
+	.subject('something')
+	.template('/a/file/somewhere.txt')
+	.params({username: 'joe'})
+	.send();
+```
+
+
 init()
 ------
 Reinitialize the mail transport and reset all defaults to the global values.

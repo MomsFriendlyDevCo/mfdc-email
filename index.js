@@ -7,7 +7,7 @@ var _ = require('lodash');
 var colors = require('chalk');
 var fs = require('fs');
 var fspath = require('path');
-var mustache = require('mustache');
+var handlebars = require('handlebars');
 var nodemailer = require('nodemailer');
 var nodemailerMailgun = require('nodemailer-mailgun-transport');
 var nodemailerSendmail = require('nodemailer-sendmail-transport');
@@ -80,15 +80,15 @@ function init() {
 * @param {Object,function} mail The mail object to dispatch or the callback if you wish to use all the defaults
 * @param {string} [mail.html] HTML payload of the email
 * @param {srting} [mail.text] Plain text payload of the email
-* @param {string} [mail.template] File on disk to use to load the email template. This is parsed as a mustache template (extension determines the format, .txt=plain text, .html=rich content)
-* @param {Object} [mail.templateParams] Object containing any dynamic parameters to be passed to the mustache template specified in mail.template
+* @param {string} [mail.template] File on disk to use to load the email template. This is parsed as a handlebars template (extension determines the format, .txt=plain text, .html=rich content)
+* @param {Object} [mail.templateParams] Object containing any dynamic parameters to be passed to the handlebars template specified in mail.template
 * @param {string} [mail.from] The from portion of the email (defaults to config.email.from if unspecified)
 * @param {string} [mail.to] The to portion of the email (defaults to config.email.to if unspecified)
 * @param {string} [mail.subject] The from portion of the email (defaults to config.email.subject if unspecified)
 * @param {string} [mail.cc] The from portion of the email (defaults to config.email.cc if unspecified)
 * @param {string} [mail.bcc] The from portion of the email (defaults to config.email.bcc if unspecified)
 * @param {function} [callback] Optional callback to invoke on completion
-* @return {Object} This chainable object
+* @return {Promise} A promise representing the status of the email being sent, resolve is called with the returned object from the transporter
 */
 function send(mail, callback) {
 	// Argument mangling {{{
@@ -108,8 +108,6 @@ function send(mail, callback) {
 
 	if (this.config.template) {
 		var content = fs.readFileSync(this.config.template, 'utf-8');
-		content = mustache.render(content, this.config.templateParams);
-
 		var ext = fspath.parse(this.config.template).ext;
 		if (ext == '.txt') {
 			this.config.text = content;
@@ -122,17 +120,35 @@ function send(mail, callback) {
 		throw new Error('Neither mail.html, mail.text or mail.template is specified when trying to send an email');
 	}
 
+	// Apply handlebars to subject {{{
+	this.config.subject = handlebars.compile(this.config.subject || '')(this.config.templateParams);
+	// }}}
+	// Apply handlebars to body {{{
+	if (this.config.text) { // Plain text
+		this.config.text = handlebars.compile(this.config.text)(this.config.templateParams);
+	} else if (this.config.html) { // HTML text
+		this.config.html = handlebars.compile(this.config.html)(this.config.templateParams);
+	} else {
+		throw new Error('Cannot template either plain or html text. This should not happen!');
+	}
+	// }}}
+
 	if (!_.get(appConfig, 'email.enabled')) {
 		console.log(colors.blue('[Email]'), 'Mail sending disabled. Would deliver email', colors.cyan('"' + this.config.subject + '"'), 'to', colors.cyan(this.config.to));
-		if (_.isFunction(callback)) setTimeout(() => callback(null, this.config.text || this.config.html));
+		if (_.isFunction(callback)) setTimeout(()=> callback());
+		return Promise.resolve();
 	} else {
 		console.log(colors.blue('[Email]'), 'Sending', colors.cyan('"' + this.config.subject + '"'), 'to', colors.cyan(this.config.to));
-		setTimeout(() => {
-			transporter.sendMail(this.config, callback || _.noop);
+		return new Promise((resolve, reject) => {
+			setTimeout(()=> {
+				transporter.sendMail(this.config, (err, res) => {
+					if (_.isFunction(callback)) callback(err, res);
+					if (err) return reject(err);
+					resolve(res);
+				});
+			});
 		});
 	}
-
-	return this;
 }
 
 
@@ -176,6 +192,7 @@ function MFDCEmail(settings) {
 	this.html = _.partial(set, 'html');
 	this.template = _.partial(set, 'template');
 	this.templateParams = _.partial(set, 'templateParams');
+	this.params = _.partial(set, 'templateParams');
 
 	this.init();
 
