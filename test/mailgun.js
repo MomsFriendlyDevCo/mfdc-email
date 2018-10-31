@@ -18,7 +18,7 @@ describe('Mailgun > Send', function() {
 				text: 'Hello World',
 			}, function(err, res) {
 				expect(err).to.be.not.ok;
-				expect(res).to.be.an.object;
+				expect(res).to.be.an('object');
 				expect(res).to.have.property('id');
 				expect(res).to.have.property('message');
 				expect(res.message).to.match(/^Queued/);
@@ -35,7 +35,7 @@ describe('Mailgun > Send', function() {
 				html: '<p>Hello <b>World</b></p>',
 			}, function(err, res) {
 				expect(err).to.be.not.ok;
-				expect(res).to.be.an.object;
+				expect(res).to.be.an('object');
 				expect(res).to.have.property('id');
 				expect(res).to.have.property('message');
 				expect(res.message).to.match(/^Queued/);

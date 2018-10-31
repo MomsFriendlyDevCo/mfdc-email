@@ -81,7 +81,7 @@ describe('Template views', function() {
 			})
 			.send(function(err, body) {
 				expect(err).to.be.not.ok;
-				expect(body).to.be.a.string;
+				expect(body).to.be.a('string');
 				expect(body).to.match(/Joe Random/);
 				expect(body).to.match(/The MFDC Team\n$/);
 				done();

@@ -19,11 +19,11 @@ describe('Alternative config locations', function() {
 				text: 'Hello World',
 			}, function(err, res) {
 				expect(err).to.be.not.ok;
-				expect(res).to.be.an.object;
+				expect(res).to.be.an('object');
 
 				expect(myEmail).to.be.an.object;
 				expect(myEmail).to.have.property('config');
-				expect(myEmail.config).to.be.an.object;
+				expect(myEmail.config).to.be.an('object');
 				expect(myEmail.config.altConfig).to.be.true;
 			});
 	});
