@@ -1,6 +1,6 @@
 @momsfriendlydevco/email
 ========================
-This module is a thin wrapper around the [nodemailer](https://github.com/nodemailer/nodemailer) module which loads its config from the locations specified in the [MFDC Node project standard layout](https://github.com/MomsFriendlyDevCo/Momsronomicon/blob/master/style-node.md).
+This module is a thin wrapper around the [nodemailer](https://github.com/nodemailer/nodemailer) module which loads its config from the locations specified in the [Doop project](https://github.com/MomsFriendlyDevCo/Doop).
 
 
 Quickstart guide
@@ -10,8 +10,6 @@ If you're project is already setup with appropriate config (see [Expected Config
 
 ```javascript
 var email = require('@momsfriendlydevco/email');
-
-// NOTE: You have to create a new instance
 
 email()
 	.send({
@@ -67,6 +65,7 @@ API
 send(email, callback)
 ---------------------
 Dispatch an email. This is as functionally similar to the Nodemailer `send()` command as possible. Use this if lower level access is required.
+Returns a promise.
 
 to, from, cc, bcc, subject, text, html()
 ----------------------------------------
