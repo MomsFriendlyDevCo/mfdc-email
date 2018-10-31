@@ -1,5 +1,5 @@
 {
-  "name": "mfdc-email",
+  "name": "@momsfriendlydevco/email",
   "version": "2.0.0",
   "description": "MFDC standard wrapper library around Nodemailer",
   "main": "index.js",

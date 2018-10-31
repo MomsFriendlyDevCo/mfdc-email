@@ -1,5 +1,5 @@
-MFDC-Email
-==========
+@momsfriendlydevco/email
+========================
 This module is a thin wrapper around the [nodemailer](https://github.com/nodemailer/nodemailer) module which loads its config from the locations specified in the [MFDC Node project standard layout](https://github.com/MomsFriendlyDevCo/Momsronomicon/blob/master/style-node.md).
 
 
@@ -9,7 +9,7 @@ If you're project is already setup with appropriate config (see [Expected Config
 
 
 ```javascript
-var email = require('mfdc-email');
+var email = require('@momsfriendlydevco/email');
 
 // NOTE: You have to create a new instance
 
@@ -27,7 +27,7 @@ email()
 or using chainable methods:
 
 ```javascript
-var email = require('mfdc-email');
+var email = require('@momsfriendlydevco/email');
 
 email()
 	.to('Joe Random <joe@random.com>')
@@ -47,7 +47,7 @@ Specifying the `template` property either as a key in the `send()` object or via
 * Mustache will automatically escape all variables. If you wish to use an unsecaped variable like a URL encase it in three levels of brackets rather than two e.g. `{{{url}}}`
 
 ```javascript
-var email = require('mfdc-email');
+var email = require('@momsfriendlydevco/email');
 
 email()
 	.to('Joe Random <joe@random.com>')
@@ -73,7 +73,7 @@ to, from, cc, bcc, subject, text, html()
 All these methods are chainable:
 
 ```javascript
-var email = require('mfdc-email');
+var email = require('@momsfriendlydevco/email');
 
 email()
 	.to('someone@somewhere.com')
