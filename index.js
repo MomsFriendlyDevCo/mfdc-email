@@ -4,7 +4,7 @@
 */
 
 var _ = require('lodash');
-var colors = require('colors');
+var colors = require('chalk');
 var fs = require('fs');
 var fspath = require('path');
 var mustache = require('mustache');
