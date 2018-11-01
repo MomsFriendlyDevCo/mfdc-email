@@ -5,6 +5,7 @@
 
 var _ = require('lodash');
 var colors = require('chalk');
+var debug = require('debug')('email');
 var fs = require('fs');
 var fspath = require('path');
 var handlebars = require('handlebars');
@@ -132,6 +133,18 @@ function send(mail, callback) {
 		throw new Error('Cannot template either plain or html text. This should not happen!');
 	}
 	// }}}
+
+	debug(
+		  'Send Email\n'
+		+ '=======================================\n'
+		+ 'To: ' + _.castArray(this.config.to).join(', ') + '\n'
+		+ (this.config.cc ? 'CC: ' + _.castArray(this.config.cc).join(', ') + '\n' : '')
+		+ (this.config.bcc ? 'BCC: ' + _.castArray(this.config.bcc).join(', ') + '\n' : '')
+		+ 'Subject: ' + this.config.subject + '\n'
+		+ '-----------------\n'
+		+ (this.config.text || this.config.html) + '\n'
+		+ '------ End ------\n'
+	);
 
 	if (!_.get(appConfig, 'email.enabled')) {
 		console.log(colors.blue('[Email]'), 'Mail sending disabled. Would deliver email', colors.cyan('"' + this.config.subject + '"'), 'to', colors.cyan(this.config.to));

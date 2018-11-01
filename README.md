@@ -36,6 +36,24 @@ email()
 	});
 ```
 
+Debugging
+---------
+This module uses the [Debug](https://www.npmjs.com/package/debug) NPM. Simply set the environment variable to `DEBUG=email` (or any valid enabling glob) to see the output.
+
+```
+> DEBUG=email mocha test/mailgun.js
+  Mailgun > Send
+  email Email
+  email =======================================
+  email To: matt@mfdc.biz
+  email Subject: Plain email test via mfdc-email
+  email -----------------
+  email Hello Joe
+  email ------ End ------
+  email  +0ms
+```
+
+
 Using template views
 --------------------
 Specifying the `template` property either as a key in the `send()` object or via the chainable `.template()` method, will specify the file on disk to be used when composing the email.
