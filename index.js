@@ -18,7 +18,7 @@ var transporter;
 var appConfig; // Global config to use when resetting (locations determined by appConfig)
 var appConfigLocations = ['config', 'app.config']; // Array of places to look for config Is expected to contain at least a 'email' object and possibly 'mailgun'
 
-/**
+/**git@github.com:MomsFriendlyDevCo/mfdc-email.git
 * Initalize the emailer
 * If this is called multiple times it restarts the mail transport
 * @return {Object} This chainable object
@@ -151,7 +151,7 @@ function send(mail, callback) {
 		if (_.isFunction(callback)) setTimeout(()=> callback());
 		return Promise.resolve();
 	} else {
-		console.log(colors.blue('[Email]'), 'Sending', colors.cyan('"' + this.config.subject + '"'), 'to', colors.cyan(this.config.to));
+		console.log(colors.blue('[Email]'), 'Sending', colors.cyan('"' + this.config.subject + '"'), 'to', colors.cyan(this.config.to), 'cc', colors.cyan(this.config.cc));
 		return new Promise((resolve, reject) => {
 			setTimeout(()=> {
 				transporter.sendMail(this.config, (err, res) => {
