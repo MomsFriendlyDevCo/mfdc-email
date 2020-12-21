@@ -1,6 +1,6 @@
 {
   "name": "@momsfriendlydevco/email",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "description": "MFDC standard wrapper library around Nodemailer",
   "main": "index.js",
   "directories": {
@@ -25,15 +25,15 @@
   "homepage": "https://github.com/MomsFriendlyDevCo/mfdc-email#readme",
   "devDependencies": {
     "chai": "^4.2.0",
-    "mocha": "^5.2.0"
+    "mocha": "^8.2.1"
   },
   "dependencies": {
-    "chalk": "^2.4.1",
-    "debug": "^4.1.0",
-    "handlebars": "^4.0.12",
-    "lodash": "^4.17.11",
-    "nodemailer": "^4.6.8",
-    "nodemailer-mailgun-transport": "^1.4.0",
+    "chalk": "^4.1.0",
+    "debug": "^4.3.1",
+    "handlebars": "^4.7.6",
+    "lodash": "^4.17.20",
+    "nodemailer": "^6.4.16",
+    "nodemailer-mailgun-transport": "^2.0.2",
     "nodemailer-sendmail-transport": "^1.0.2"
   }
 }

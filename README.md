@@ -130,11 +130,18 @@ Expected Config
 ---------------
 This module expects the following `global.config` / `global.app.config` variables to be specified to operate:
 
-| Method    | Key                              | Type           | Description |
-|-----------|----------------------------------|----------------|-------------|
-| All       | `email.enabled`                  | Boolean        | Temporarily disable the sending of email. If falsy this will message to the console and not actually send anything |
-|           | `email.method`                   | String         | What transport profile to use, see `init()` for details |
-|           | `email.{to,from,subject,cc,bcc}` | String / Array | Default fields to use if unspecified |
-|           | `email.template`                 | String         | Read a template file and render it as the email content |
-| Mailgun   | `mailgun.apiKey`                 | String         | The API key for the Mailgun profile |
-|           | `mailgun.domain`                 | String         | The Mailgun domain, usually something like 'acme.com' (no 'http://' prefix or Mailgun suffix) |
+| Method     | Key                              | Type           | Description |
+|------------|----------------------------------|----------------|-------------|
+| All        | `email.enabled`                  | Boolean        | Temporarily disable the sending of email. If falsy this will message to the console and not actually send anything |
+|            | `email.method`                   | String         | What transport profile to use, see `init()` for details |
+|            | `email.{to,from,subject,cc,bcc}` | String / Array | Default fields to use if unspecified |
+|            | `email.template`                 | String         | Read a template file and render it as the email content |
+| Mailgun    | `mailgun.apiKey`                 | String         | The API key for the Mailgun profile |
+|            | `mailgun.domain`                 | String         | The Mailgun domain, usually something like 'acme.com' (no 'http://' prefix or Mailgun suffix) |
+| Outlook365 | `outlook365.user`                | String         | User auth to send emails as via Outlook365 |
+|            | `outlook365.pass`                | String         | User pass to send emails as via Outlook365 |
+|            | `smtp.host`                      | String         | Hostname to send via with SMTP |
+|            | `smtp.port`                      | String         | Port to send via with SMTP |
+|            | `smtp.secure`                    | Boolean        | Whether the connection should use TLS |
+| SMTP       | `smtp.user`                      | String         | User auth to send emails as via SMTP |
+|            | `smtp.pass`                      | String         | User pass to send emails as via SMTP |

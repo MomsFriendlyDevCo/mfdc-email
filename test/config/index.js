@@ -15,4 +15,15 @@ module.exports = _.merge({
 		apiKey: 'FIXME:STORE THIS IN THE PRIVATE.JS FILE!!!',
 		domain: 'FIXME:STORE THIS IN THE PRIVATE.JS FILE!!!',
 	},
+	outlook365: {
+		user: 'FIXME:STORE THIS IN THE PRIVATE.JS FILE!!!',
+		pass: 'FIXME:STORE THIS IN THE PRIVATE.JS FILE!!!',
+	},
+	smtp: {
+		host: 'FIXME:STORE THIS IN THE PRIVATE.JS FILE!!!',
+		port: 587,
+		secure: true,
+		user: 'FIXME:STORE THIS IN THE PRIVATE.JS FILE!!!',
+		pass: 'FIXME:STORE THIS IN THE PRIVATE.JS FILE!!!',
+	},
 }, require('./private.js'));

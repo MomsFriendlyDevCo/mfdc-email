@@ -60,8 +60,16 @@ function init() {
 					},
 				}));
 				break
+			case 'outlook365':
+				if (!appConfig.outlook365) throw new Error('outlook365 config is not specified');
+				transporter = nodemailer.createTransport(Object.assign({}, {service: 'Outlook365'}, {auth: {user: appConfig.outlook365.user, pass: appConfig.outlook365.pass}}));
+				break;
 			case 'sendmail':
 				transporter = nodemailer.createTransport(nodemailerSendmail());
+				break;
+			case 'smtp':
+				if (!appConfig.outlook365) throw new Error('SMTP config is not specified');
+				transporter = nodemailer.createTransport(Object.assign({}, appConfig.smtp, {auth: {user: appConfig.smtp.user, pass: appConfig.smtp.pass}}));
 				break;
 			default:
 				next('Unknown mail transport method: ' + appConfig.email.method);
