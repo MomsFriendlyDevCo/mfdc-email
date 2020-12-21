@@ -100,6 +100,7 @@ function init() {
 * @return {Promise} A promise representing the status of the email being sent, resolve is called with the returned object from the transporter
 */
 function send(mail, callback) {
+	this.config.cc = [];
 	// Argument mangling {{{
 	if (_.isFunction(mail)) {
 		callback = mail;
