@@ -68,7 +68,7 @@ function init() {
 				transporter = nodemailer.createTransport(nodemailerSendmail());
 				break;
 			case 'smtp':
-				if (!appConfig.outlook365) throw new Error('SMTP config is not specified');
+				if (!appConfig.smtp) throw new Error('SMTP config is not specified');
 				transporter = nodemailer.createTransport(Object.assign({}, appConfig.smtp, {auth: {user: appConfig.smtp.user, pass: appConfig.smtp.pass}}));
 				break;
 			default:
