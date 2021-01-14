@@ -1,6 +1,6 @@
 {
   "name": "@momsfriendlydevco/email",
-  "version": "2.3.2",
+  "version": "2.3.3",
   "description": "MFDC standard wrapper library around Nodemailer",
   "main": "index.js",
   "directories": {

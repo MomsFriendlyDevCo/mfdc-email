@@ -163,7 +163,9 @@ function send(mail, callback) {
 		console.log(colors.blue('[Email]'), 'Sending', colors.cyan('"' + this.config.subject + '"'), 'to', colors.cyan(this.config.to), 'cc', colors.cyan(this.config.cc));
 		return new Promise((resolve, reject) => {
 			setTimeout(()=> {
-				transporter.sendMail(this.config, (err, res) => {
+				transporter.sendMail(_.pick(this.config, [
+					'from', 'to', 'subject', 'cc', 'bcc', 'text', 'html',
+				]), (err, res) => {
 					if (_.isFunction(callback)) callback(err, res);
 					if (err) return reject(err);
 					resolve(res);
