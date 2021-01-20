@@ -164,7 +164,7 @@ function send(mail, callback) {
 		return new Promise((resolve, reject) => {
 			setTimeout(()=> {
 				transporter.sendMail(_.pick(this.config, [
-					'from', 'to', 'subject', 'cc', 'bcc', 'text', 'html',
+					'from', 'to', 'subject', 'cc', 'bcc', 'text', 'html', 'attachments',
 				]), (err, res) => {
 					if (_.isFunction(callback)) callback(err, res);
 					if (err) return reject(err);
