@@ -99,6 +99,28 @@ email()
 ```
 
 
+attachments()
+-------------
+Attachments are an array of various inputs including inline file contents, paths to files or streams.
+
+```javascript
+var email = require('@momsfriendlydevco/email');
+
+email()
+	.to('someone@somewhere.com')
+	.subject('something')
+	.attachments([
+		{filename: 'inline-file.txt', content: 'Hello World!'},
+		{filename: 'file-on-disk.txt', path: '/tmp/file-on-disk.txt'},
+		{filename: 'file-from-stream.txt', fs.createReadSteram('/tmp/file-stream.txt')},
+		{raw: '... mime encoding ...'},
+	])
+	.send();
+```
+
+See the [NodeMailer attachment specification](https://nodemailer.com/message/attachments/) for more details.
+
+
 params, templateparams
 ----------------------
 Populate the Handlebars replacement engine with a given object.

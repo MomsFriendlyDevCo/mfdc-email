@@ -216,6 +216,7 @@ function MFDCEmail(settings) {
 	this.html = _.partial(set, 'html');
 	this.template = _.partial(set, 'template');
 	this.templateParams = _.partial(set, 'templateParams');
+	this.attachments = _.partial(set, 'attachments');
 	this.params = _.partial(set, 'templateParams');
 
 	this.init();
