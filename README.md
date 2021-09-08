@@ -158,6 +158,7 @@ This module expects the following `global.config` / `global.app.config` variable
 |            | `email.method`                   | String         | What transport profile to use, see `init()` for details |
 |            | `email.{to,from,subject,cc,bcc}` | String / Array | Default fields to use if unspecified |
 |            | `email.template`                 | String         | Read a template file and render it as the email content |
+|            | `email.inlineBase64`		| Boolean	 | Automatically convert base64 blob to cid attachment + ref |
 | Mailgun    | `mailgun.apiKey`                 | String         | The API key for the Mailgun profile |
 |            | `mailgun.domain`                 | String         | The Mailgun domain, usually something like 'acme.com' (no 'http://' prefix or Mailgun suffix) |
 | Outlook365 | `outlook365.user`                | String         | User auth to send emails as via Outlook365 |

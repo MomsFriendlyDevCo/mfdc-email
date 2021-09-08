@@ -77,6 +77,13 @@ function init() {
 	}
 	// }}}
 
+	// Inline Base 64 support{{{
+	if(appConfig.email.inlineBase64){
+		var inlineBase64 = require('nodemailer-plugin-inline-base64');
+		transporter.user('compile', inlineBase64())
+	}
+	//}}}
+
 	return this;
 }
 
