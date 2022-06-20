@@ -9,29 +9,27 @@ describe('Disabled email > Send', function() {
 		config.email.method = 'sendmail';
 	});
 
-	it('should send a plain email', function(done) {
+	it('should send a plain email', ()=>
 		email()
 			.send({
 				subject: 'Plain email test via mfdc-email',
 				text: 'Hello World',
-			}, function(err, res) {
-				expect(err).to.be.not.ok;
-				expect(res).to.be.equal('Hello World');
-				done();
-			});
-	});
+			})
+			.then(res => {
+				expect(res).to.have.nested.property('config.text', 'Hello World');
+			})
+	);
 
-	it('should send a HTML email', function(done) {
+	it('should send a HTML email', ()=>
 		email()
 			.send({
 				subject: 'HTML email test via mfdc-email',
 				html: '<p>Hello <b>World</b></p>',
-			}, function(err, res) {
-				expect(err).to.be.not.ok;
-				expect(res).to.be.equal('<p>Hello <b>World</b></p>');
-				done();
-			});
-	});
+			})
+			.then(res => {
+				expect(res).to.have.nested.property('config.html', '<p>Hello <b>World</b></p>');
+			})
+	);
 });
 
 describe('Disabled email > chainable', function() {
@@ -40,27 +38,26 @@ describe('Disabled email > chainable', function() {
 		config.email.method = 'sendmail';
 	});
 
-	it('should send a plain email', function(done) {
+	it('should send a plain email', ()=>
 		email()
 			.subject('Plain chainable method email test via mfdc-email')
 			.text('Hello World')
-			.send(function(err, res) {
-				expect(err).to.be.not.ok;
-				expect(res).to.be.equal('Hello World');
-				done();
-			});
-	});
+			.send()
+			.then(res => {
+				expect(res).to.have.nested.property('config.subject', 'Plain chainable method email test via mfdc-email');
+				expect(res).to.have.nested.property('config.text', 'Hello World');
+			})
+	);
 
-	it('should send a HTML email', function(done) {
+	it('should send a HTML email', ()=>
 		email()
 			.subject('HTML chainable method email test via mfdc-email')
 			.html('<p>Hello <b>World</b></p>')
-			.send(function(err, res) {
-				expect(err).to.be.not.ok;
-				expect(res).to.be.equal('<p>Hello <b>World</b></p>');
-				done();
-			});
-	});
+			.send()
+			.then(res => {
+				expect(res).to.have.nested.property('config.html', '<p>Hello <b>World</b></p>');
+			})
+	);
 });
 
 describe('Template views', function() {
@@ -69,7 +66,7 @@ describe('Template views', function() {
 		config.email.method = 'sendmail';
 	});
 
-	it('should correctly template the email', function(done) {
+	it('should correctly template the email', ()=>
 		email()
 			.to('Joe Random <joe@random.com>')
 			.subject('Password Recovery')
@@ -79,14 +76,15 @@ describe('Template views', function() {
 				signoff: 'The MFDC Team',
 				url: 'http://domain.com/reset/TOKEN',
 			})
-			.send(function(err, body) {
-				expect(err).to.be.not.ok;
-				expect(body).to.be.a('string');
-				expect(body).to.match(/Joe Random/);
-				expect(body).to.match(/The MFDC Team\n$/);
-				done();
-			});
-	});
+			.send()
+			.then(res => {
+				expect(res).to.be.an('object');
+				expect(res).to.have.property('body');
+				expect(res.body).to.be.a('string');
+				expect(res.body).to.match(/Joe Random/);
+				expect(res.body).to.match(/The MFDC Team\n$/);
+			})
+	);
 });
 
 describe('State reset', function() {
@@ -95,17 +93,16 @@ describe('State reset', function() {
 		config.email.method = 'sendmail';
 	});
 
-	it('should send an email to joe@mfdc.biz', function(done) {
+	it('should send an email to joe@mfdc.biz', ()=>
 		email()
 			.to('joe@mfdc.biz')
 			.subject('Hello World')
 			.text('Hello World')
-			.send(function(err, res) {
-				expect(err).to.be.not.ok;
-				expect(res).to.be.equal('Hello World');
-				done();
-			});
-	});
+			.send()
+			.then(res => {
+				expect(res).to.have.nested.property('config.subject', 'Hello World');
+			})
+	);
 
 	it('state should have reset', function() {
 		var newEmail = email();

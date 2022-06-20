@@ -9,27 +9,19 @@ describe('Sendmail > Send', function() {
 		config.email.method = 'sendmail';
 	});
 
-	it('should send a plain email', function(done) {
+	it('should send a plain email', ()=>
 		email()
 			.send({
 				subject: 'Plain email test via mfdc-email',
 				text: 'Hello World',
-			}, function(err, res) {
-				expect(err).to.be.not.ok;
-				// FIXME: Not sure what res should be
-				done();
-			});
-	});
+			})
+	);
 
-	it('should send a HTML email', function(done) {
+	it('should send a HTML email', ()=>
 		email()
 			.send({
 				subject: 'HTML email test via mfdc-email',
 				html: '<p>Hello <b>World</b></p>',
-			}, function(err, res) {
-				expect(err).to.be.not.ok;
-				// FIXME: Not sure what res should be
-				done();
-			});
-	});
+			})
+	);
 });
