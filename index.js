@@ -12,13 +12,14 @@ var handlebars = require('handlebars');
 var nodemailer = require('nodemailer');
 var nodemailerMailgun = require('nodemailer-mailgun-transport');
 var nodemailerSendmail = require('nodemailer-sendmail-transport');
+var inlineBase64 = require('nodemailer-plugin-inline-base64');
 
 var transporter;
 
 var appConfig; // Global config to use when resetting (locations determined by appConfig)
 var appConfigLocations = ['config', 'app.config']; // Array of places to look for config Is expected to contain at least a 'email' object and possibly 'mailgun'
 
-/**git@github.com:MomsFriendlyDevCo/mfdc-email.git
+/**
 * Initalize the emailer
 * If this is called multiple times it restarts the mail transport
 * @return {Object} This chainable object
@@ -77,12 +78,11 @@ function init() {
 	}
 	// }}}
 
-	// Inline Base 64 support{{{
-	if(appConfig.email.inlineBase64){
-		var inlineBase64 = require('nodemailer-plugin-inline-base64');
-		transporter.user('compile', inlineBase64())
+	// Plugins {{{
+	if (appConfig.email.enabled) {
+		transporter.use('compile', inlineBase64()) // Inline Base 64 support
 	}
-	//}}}
+	// }}}
 
 	return this;
 }
