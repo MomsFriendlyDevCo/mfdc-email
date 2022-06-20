@@ -162,10 +162,16 @@ function send(mail, callback) {
 		+ '------ End ------\n'
 	);
 
+	// Response sent to promise / callbacks
+	var response = {
+		config: this.config,
+		body: this.config.text || this.config.html,
+	};
+
 	if (!_.get(appConfig, 'email.enabled')) {
 		console.log(colors.blue('[Email]'), 'Mail sending disabled. Would deliver email', colors.cyan('"' + this.config.subject + '"'), 'to', colors.cyan(this.config.to));
-		if (_.isFunction(callback)) setTimeout(()=> callback());
-		return Promise.resolve();
+		if (_.isFunction(callback)) setTimeout(()=> callback(null, response));
+		return Promise.resolve(response);
 	} else {
 		console.log(colors.blue('[Email]'), 'Sending', colors.cyan('"' + this.config.subject + '"'), 'to', colors.cyan(this.config.to), 'cc', colors.cyan(this.config.cc));
 		return new Promise((resolve, reject) => {
@@ -173,9 +179,10 @@ function send(mail, callback) {
 				transporter.sendMail(_.pick(this.config, [
 					'from', 'to', 'subject', 'cc', 'bcc', 'text', 'html', 'attachments',
 				]), (err, res) => {
-					if (_.isFunction(callback)) callback(err, res);
+					Object.assign(response, res);
+					if (_.isFunction(callback)) callback(err, response);
 					if (err) return reject(err);
-					resolve(res);
+					resolve(response);
 				});
 			});
 		});
