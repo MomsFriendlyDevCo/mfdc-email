@@ -2,6 +2,13 @@
 ========================
 This module is a thin wrapper around the [nodemailer](https://github.com/nodemailer/nodemailer) module which loads its config from the locations specified in the [Doop project](https://github.com/MomsFriendlyDevCo/Doop).
 
+Features:
+
+* Object based syntax
+* Out-of-the-box compatible with [Doop projects](https://github.com/MomsFriendlyDevCo/Doop) and their configuration system
+* Includes [Nodemailer-Plugin-Inline-Base64](https://github.com/mixmaxhq/nodemailer-plugin-inline-base64) as default to correctly convert Base64 inline to CID attachments
+* Template attachment and compiling using [Handlebars](https://handlebarsjs.com)
+
 
 Quickstart guide
 ----------------
